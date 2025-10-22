@@ -6,6 +6,8 @@ Script purpose: This script showcases the different transformation and cleaning 
 Each column was carefully checked for inconsistencies, and necessary adjustments were made to ensure the data was accurate, consistent,
 and ready for analysis.
 */
+
+
 -- DATA standardization and Consistency
 -- Check for position
  SELECT DISTINCT(Position)
