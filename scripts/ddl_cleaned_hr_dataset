@@ -1,1 +1,22 @@
+/*
+===============================================================================
+DDL Script: Create cleaned hr dataset
+===============================================================================
+Script Purpose:
+    This script creates tables in the 'clean hr' schema.
+	  Run this script to re-define the DDL structure of 'messy_hr_dataset' Tables
+===============================================================================
+*/
 
+CREATE TABLE cleaned_hr_data (
+name VARCHAR(100),
+age INT,
+gender VARCHAR(100),
+department VARCHAR(100),
+position VARCHAR(100),
+salary INT,
+joining_date DATE,
+performance_score VARCHAR(100),
+email  VARCHAR(100),
+phone_number  VARCHAR(100)
+)
