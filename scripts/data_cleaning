@@ -1,1 +1,120 @@
+/*
+==========================================================================
+Data cleaning
+=========================================================================
+Script purpose: This script showcases the different transformation and cleaning processes carried out on the dataset.
+Each column was carefully checked for inconsistencies, and necessary adjustments were made to ensure the data was accurate, consistent,
+and ready for analysis.
+*/
+-- DATA standardization and Consistency
+-- Check for position
+ SELECT DISTINCT(Position)
+ FROM clean_hr.messy_hr_data
+ WHERE position != TRIM(position);
+ 
+ -- Check for Gender Data quality (unwanted Space)
+ SELECT DISTINCT(Gender)
+ FROM clean_hr.messy_hr_data
+ WHERE gender != TRIM(gender);
+ 
+ -- Check for department Data quality (Unwanted Space)
+ SELECT DISTINCT(Position)
+ FROM clean_hr.messy_hr_data
+ WHERE position != TRIM(position);
+ 
+  -- Check for Email Data quality 
+ SELECT DISTINCT(Email),
+ CASE 
+	 WHEN Email IN ('', 'nan') THEN 'N/A'
+	 ELSE Email
+END email
+ FROM clean_hr.messy_hr_data
+ ;
+  
+  
+  -- Check for Phone Number Data quality
+SELECT DISTINCT(Phone_Number),
+ CASE 
+	 WHEN Phone_Number IN (' ', 'nan') THEN NULL 
+	 ELSE Phone_Number
+END phone_number
+ FROM clean_hr.messy_hr_data;
+ 
+ 
+ 
+ 
+ 
+  -- Check for Performance_score Data quality
+ SELECT 
+ DISTINCT(Performance_score),
+ -- Transforms Performance_Score
+ CASE Performance_Score
+	 WHEN 'A' THEN 'Excellent'
+	 WHEN 'B' THEN 'Very Good'
+	 WHEN 'C' THEN 'Good'
+	 WHEN 'D' THEN 'Fair'
+	 WHEN 'F' THEN 'Poor'
+ END performance_score
+ FROM clean_hr.messy_hr_data
+ WHERE Performance_Score = TRIM(Performance_Score);
+ 
+ -- - Check for age Data quality
+ SELECT DISTINCT(age)
+ FROM clean_hr.messy_hr_data;
+ 
+ -- Data standardization
+ SELECT
+  DISTINCT age,
+-- Handling inconsistencies in age
+CASE 
+	  WHEN age = 'thirty' THEN 30
+	  WHEN age = 'nan' THEN NULL
+	  ELSE age
+END age_new 
+ FROM clean_hr.messy_hr_data
 
+;
+
+
+
+
+
+-- Average Salary of each position excluding the 'NAN'
+
+SELECT 
+	position,
+	salary
+FROM messy_hr_data
+WHERE salary = TRIM(salary) and position = 'Analyst'
+ ;
+ 
+ -- Data standardization
+ SELECT 
+ Salary,
+ -- Handling inconsistency and missing data in salary column
+ CASE 
+  WHEN salary = 'sixty thousand' THEN 60000
+  WHEN salary != TRIM(salary) AND position = 'Analyst'  THEN 60000
+  WHEN salary != TRIM(salary) AND position = 'Clerk'  THEN 60000
+  WHEN salary != TRIM(salary) AND position = 'Director'  THEN 65000
+  WHEN salary != TRIM(salary) AND position = 'Assistant'  THEN 60000
+  WHEN salary != TRIM(salary) AND position = 'Manager'  THEN 65000
+  ELSE Salary
+  END new_salary
+ FROM clean_hr.messy_hr_data;
+ 
+ 
+ 
+-- Check for Invalid date  
+SELECT
+DISTINCT Joining_Date,
+-- Date transformation
+ CASE
+	 WHEN Joining_Date LIKE '%-%-%' THEN STR_TO_DATE(Joining_Date, '%m-%d-%Y')
+	 WHEN Joining_Date LIKE '%/%/%' AND SUBSTRING_INDEX((Joining_Date), '/', 1) > 12 THEN STR_TO_DATE(Joining_Date, '%d/%m/%Y')
+	 WHEN Joining_Date LIKE '%/%/%' THEN STR_TO_DATE(Joining_Date, '%m/%d/%Y')
+	 WHEN Joining_Date LIKE '%.%.%' THEN STR_TO_DATE(Joining_Date, '%Y.%m.%d')
+	 WHEN Joining_Date LIKE '%,%' THEN STR_TO_DATE(Joining_Date, '%M%d,%Y')
+	 ELSE Joining_Date
+ END joining_date
+FROM messy_hr_data ;
