@@ -1,1 +1,72 @@
+/*
+===============================================================================
+Stored Procedure: Load cleaned_hr_dataset (messy_hr_dataset -> cleaned_hr_dataset)
+===============================================================================
+Script Purpose:
+    This stored procedure performs the ETL (Extract, Transform, Load) process to 
+    populate the 'cleaned_hr_dataset'  table from the 'messy_hr_dataset' table.
+	Actions Performed:
+		- Inserts transformed and cleansed data from messy_hr_dataset to cleaned_hr_datasetr tables.
+		
+Parameters:
+    None. 
+	  This stored procedure does not accept any parameters or return any values.
+===============================================================================
+*/
 
+INSERT INTO cleaned_hr_data (
+name,
+age ,
+gender ,
+department ,
+position ,
+salary ,
+joining_date ,
+performance_score,
+email ,
+phone_number
+)
+
+SELECT
+	CONCAT(UPPER(LEFT(TRIM(name),1)), LOWER(SUBSTRING( TRIM(name),2))) name,
+	CASE 
+		  WHEN age = 'thirty' THEN 30
+		  WHEN age = 'nan' THEN NULL
+		  ELSE age
+	END age,
+    gender,
+    department,
+    position,
+    CASE 
+	  WHEN salary = 'sixty thousand' THEN 60000
+	  WHEN salary != TRIM(salary) AND position = 'Analyst'  THEN 60000
+	  WHEN salary != TRIM(salary) AND position = 'Clerk'  THEN 60000
+	  WHEN salary != TRIM(salary) AND position = 'Director'  THEN 65000
+	  WHEN salary != TRIM(salary) AND position = 'Assistant'  THEN 60000
+	  WHEN salary != TRIM(salary) AND position = 'Manager'  THEN 65000
+	  ELSE Salary
+  END salary,
+	CASE
+	 WHEN Joining_Date LIKE '%-%-%' THEN STR_TO_DATE(Joining_Date, '%m-%d-%Y')
+	 WHEN Joining_Date LIKE '%/%/%' AND SUBSTRING_INDEX((Joining_Date), '/', 1) > 12 THEN STR_TO_DATE(Joining_Date, '%d/%m/%Y')
+	 WHEN Joining_Date LIKE '%/%/%' THEN STR_TO_DATE(Joining_Date, '%m/%d/%Y')
+	 WHEN Joining_Date LIKE '%.%.%' THEN STR_TO_DATE(Joining_Date, '%Y.%m.%d')
+	 WHEN Joining_Date LIKE '%,%' THEN STR_TO_DATE(Joining_Date, '%M%d,%Y')
+	 ELSE Joining_Date
+ END joining_date,
+ CASE Performance_Score
+	 WHEN 'A' THEN 'Excellent'
+	 WHEN 'B' THEN 'Very Good'
+	 WHEN 'C' THEN 'Good'
+	 WHEN 'D' THEN 'Fair'
+	 WHEN 'F' THEN 'Poor'
+ END performance_score,
+  CASE 
+	 WHEN Email IN ('', 'nan') THEN 'N/A' 
+	 ELSE Email
+  END email,
+   CASE 
+	 WHEN Phone_Number IN (' ', 'nan') THEN 'N/A' 
+	 ELSE Phone_Number
+END phone_number
+FROM clean_hr.messy_hr_data;
