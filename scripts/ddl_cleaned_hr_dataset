@@ -3,8 +3,8 @@
 DDL Script: Create cleaned hr dataset
 ===============================================================================
 Script Purpose:
-    This script creates tables in the 'clean hr' schema.
-	  Run this script to re-define the DDL structure of 'messy_hr_dataset' Tables
+    This script creates 'clean hr' table.
+	  Run this script to re-define the DDL structure of 'messy_hr_dataset' Table
 ===============================================================================
 */
 
